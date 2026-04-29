@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Adora's Day">
+<meta name="theme-color" content="#080810">
+<title>Adora's Daily System</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080810;
+    --card-anchor: #1a1a2e;
+    --card-body: #0d2137;
+    --card-plan: #1b2838;
+    --card-work: #12192c;
+    --card-reward: #1a2a1a;
+    --accent-anchor: #e94560;
+    --accent-body: #00b4d8;
+    --accent-plan: #f4a261;
+    --accent-work: #8338ec;
+    --accent-reward: #06d6a0;
+    --text: #f0f0f0;
+    --muted: #888;
+    --dim: #444;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    padding: 0;
+    overscroll-behavior: none;
+  }
+
+  .app {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 28px 16px 60px;
+  }
+
+  .label-small {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--accent-anchor);
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+
+  h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px;
+    line-height: 1.25;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .subtitle {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 28px;
+    line-height: 1.5;
+  }
+
+  .tabs {
+    display: flex;
+    background: #111;
+    border-radius: 12px;
+    padding: 4px;
+    margin-bottom: 20px;
+    border: 1px solid #1e1e1e;
+  }
+
+  .tab {
+    flex: 1;
+    padding: 11px 8px;
+    border-radius: 9px;
+    border: none;
+    cursor: pointer;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: transparent;
+    color: #555;
+    transition: all 0.2s ease;
+  }
+
+  .tab.active-morning { background: var(--accent-anchor); color: #fff; }
+  .tab.active-evening { background: var(--accent-work); color: #fff; }
+
+  .time-banner {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: #555;
+    margin-bottom: 16px;
+    padding-left: 2px;
+  }
+
+  .cards {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .card {
+    display: flex;
+    gap: 14px;
+    padding: 16px 18px;
+    border-radius: 14px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    border-radius: 0 2px 2px 0;
+    transition: background 0.25s ease;
+  }
+
+  .card.done { opacity: 0.4; background: #0a0a0a !important; border-color: #1a1a1a !important; }
+  .card.done::before { background: #333 !important; }
+  .card.done .card-title { text-decoration: line-through; color: var(--dim); }
+  .card.done .card-detail { color: #333; }
+  .card.done .card-time { color: #333; }
+  .card.done .tag-pill { opacity: 0.3; }
+  .card.done .check-ring { border-color: #555 !important; }
+
+  /* Tag variants */
+  .card[data-tag="anchor"] { background: var(--card-anchor); border-color: #e9456022; }
+  .card[data-tag="anchor"]::before { background: var(--accent-anchor); }
+  .card[data-tag="body"] { background: var(--card-body); border-color: #00b4d822; }
+  .card[data-tag="body"]::before { background: var(--accent-body); }
+  .card[data-tag="plan"] { background: var(--card-plan); border-color: #f4a26122; }
+  .card[data-tag="plan"]::before { background: var(--accent-plan); }
+  .card[data-tag="work"] { background: var(--card-work); border-color: #8338ec22; }
+  .card[data-tag="work"]::before { background: var(--accent-work); }
+  .card[data-tag="reward"] { background: var(--card-reward); border-color: #06d6a022; }
+  .card[data-tag="reward"]::before { background: var(--accent-reward); }
+
+  .card-icon-col { min-width: 42px; text-align: center; }
+  .card-icon { font-size: 22px; line-height: 1; display: block; }
+
+  .tag-pill {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    margin-top: 5px;
+    display: block;
+  }
+
+  .card[data-tag="anchor"] .tag-pill { color: var(--accent-anchor); }
+  .card[data-tag="body"] .tag-pill { color: var(--accent-body); }
+  .card[data-tag="plan"] .tag-pill { color: var(--accent-plan); }
+  .card[data-tag="work"] .tag-pill { color: var(--accent-work); }
+  .card[data-tag="reward"] .tag-pill { color: var(--accent-reward); }
+
+  .card-content { flex: 1; }
+
+  .card-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+  }
+
+  .card-time {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .duration-pill {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 5px;
+    margin-left: 7px;
+  }
+
+  .card[data-tag="anchor"] .duration-pill { background: #e9456022; color: var(--accent-anchor); }
+  .card[data-tag="body"] .duration-pill { background: #00b4d822; color: var(--accent-body); }
+  .card[data-tag="plan"] .duration-pill { background: #f4a26122; color: var(--accent-plan); }
+  .card[data-tag="work"] .duration-pill { background: #8338ec22; color: var(--accent-work); }
+  .card[data-tag="reward"] .duration-pill { background: #06d6a022; color: var(--accent-reward); }
+
+  .check-ring {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    border: 2px solid #333;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+    font-size: 12px;
+    font-weight: bold;
+    color: #000;
+  }
+
+  .card[data-tag="anchor"]:not(.done) .check-ring:hover,
+  .card[data-tag="anchor"].done .check-ring { border-color: var(--accent-anchor); background: var(--accent-anchor); }
+  .card[data-tag="body"]:not(.done) .check-ring:hover,
+  .card[data-tag="body"].done .check-ring { border-color: var(--accent-body); background: var(--accent-body); }
+  .card[data-tag="plan"]:not(.done) .check-ring:hover,
+  .card[data-tag="plan"].done .check-ring { border-color: var(--accent-plan); background: var(--accent-plan); }
+  .card[data-tag="work"]:not(.done) .check-ring:hover,
+  .card[data-tag="work"].done .check-ring { border-color: var(--accent-work); background: var(--accent-work); }
+  .card[data-tag="reward"]:not(.done) .check-ring:hover,
+  .card[data-tag="reward"].done .check-ring { border-color: var(--accent-reward); background: var(--accent-reward); }
+
+  .card-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 15px;
+    color: var(--text);
+    margin-bottom: 5px;
+    transition: all 0.2s;
+  }
+
+  .card-detail {
+    font-size: 12.5px;
+    color: #aaa;
+    line-height: 1.55;
+    transition: color 0.2s;
+  }
+
+  .novelty-box {
+    margin-top: 10px;
+    background: #1a1a0d;
+    border: 1px solid #f4a26133;
+    border-radius: 12px;
+    padding: 16px 18px;
+  }
+
+  .novelty-box .label-small { color: var(--accent-plan); margin-bottom: 6px; }
+  .novelty-box p { font-size: 13px; color: #bbb; line-height: 1.6; }
+
+  .legend {
+    margin-top: 28px;
+    padding: 16px;
+    background: #0d0d0d;
+    border-radius: 12px;
+    border: 1px solid #181818;
+  }
+
+  .legend-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: #444;
+    letter-spacing: 0.1em;
+    margin-bottom: 10px;
+  }
+
+  .legend-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: #555;
+  }
+
+  .legend-dot {
+    width: 8px; height: 8px;
+    border-radius: 2px;
+  }
+
+  .reset-btn {
+    display: block;
+    margin: 20px auto 0;
+    background: transparent;
+    border: 1px solid #222;
+    color: #444;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    padding: 8px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .reset-btn:hover { border-color: #444; color: #777; }
+
+  .footer-note {
+    margin-top: 24px;
+    text-align: center;
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: 13px;
+    color: #333;
+  }
+
+  .progress-bar-wrap {
+    height: 3px;
+    background: #1a1a1a;
+    border-radius: 2px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+
+  .morning-fill { background: var(--accent-anchor); }
+  .evening-fill { background: var(--accent-work); }
+
+  @keyframes checkPop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+  }
+
+  .popping { animation: checkPop 0.2s ease; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="label-small">ADORA'S DAILY SYSTEM</div>
+  <h1>Built for your brain.<br>Not against it.</h1>
+  <p class="subtitle">Tap any step to mark it done. Decisions made the night before.</p>
+
+  <div class="tabs">
+    <button class="tab active-morning" id="tab-morning" onclick="switchTab('morning')">🌅 Morning</button>
+    <button class="tab" id="tab-evening" onclick="switchTab('evening')">🌙 Evening</button>
+  </div>
+
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill morning-fill" id="progress-fill" style="width:0%"></div>
+  </div>
+
+  <div class="time-banner" id="time-banner">5:30am → 10:10am</div>
+
+  <div class="cards" id="cards-container"></div>
+
+  <div id="novelty-note" style="display:none">
+    <div class="novelty-box">
+      <div class="label-small">🔄 NOVELTY LAYER — so you don't abandon this</div>
+      <p>Every Sunday, swap ONE small element — your reward, wind-down activity, or tracker format. The structure stays fixed. The details rotate. This feeds your novelty-seeking brain without blowing up the system.</p>
+    </div>
+  </div>
+
+  <div class="legend">
+    <div class="legend-label">LEGEND</div>
+    <div class="legend-items">
+      <div class="legend-item"><div class="legend-dot" style="background:#e94560"></div>ANCHOR</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#00b4d8"></div>BODY</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#f4a261"></div>PLAN</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#8338ec"></div>WORK</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#06d6a0"></div>REWARD</div>
+    </div>
+  </div>
+
+  <button class="reset-btn" onclick="resetDay()">↺ RESET TODAY</button>
+  <p class="footer-note">Start with just the Tonight Card. One thing at a time.</p>
+
+</div>
+
+<script>
+const routines = {
+  morning: [
+    { time:"5:30am", duration:"5 min", title:"Wake up", detail:"Phone stays face down — across the room. No scrolling. Just breathe.", tag:"anchor", icon:"🌅" },
+    { time:"5:35am", duration:"5 min", title:"Bathroom basics #1", detail:"Face wash + brush teeth. Anchored here so it never gets skipped. Do it before you're fully awake.", tag:"body", icon:"🚿" },
+    { time:"5:40am", duration:"20 min", title:"Prayer", detail:"Your existing anchor. Protected. Nothing moves this.", tag:"anchor", icon:"🙏" },
+    { time:"6:00am", duration:"10 min", title:"Launch sequence", detail:"Open your Today Card (written last night). 3 tasks, already chosen. Pour your drink. Sit down. No decisions needed.", tag:"plan", icon:"🗒️" },
+    { time:"6:10am", duration:"110 min", title:"Deep work block 1", detail:"Task #1 from your Today Card. Use Focusmate 3×/week. Breakfast at desk is fine.", tag:"work", icon:"🧠" },
+    { time:"8:00am", duration:"10 min", title:"Micro-reward break", detail:"Something genuinely enjoyable — favourite song, step outside, a snack. Non-negotiable dopamine top-up.", tag:"reward", icon:"⭐" },
+    { time:"8:10am", duration:"110 min", title:"Deep work block 2", detail:"Your sharpest window. Task #2 from Today Card. Guard this time fiercely.", tag:"work", icon:"🧠" },
+    { time:"10:00am", duration:"10 min", title:"Transition + visual tick", detail:"Tick off what got done on your tracker. 30 seconds of genuine satisfaction. Then pivot to midday.", tag:"plan", icon:"✅" }
+  ],
+  evening: [
+    { time:"10:00pm", duration:"15 min", title:"Shutdown ritual", detail:"Close all work tabs. Write one sentence about what you did today. Signal to your brain: work is done.", tag:"anchor", icon:"🔒" },
+    { time:"10:15pm", duration:"15 min", title:"Brain dump", detail:"Everything in your head → Google Keep. Tasks, worries, ideas, things you remembered. Empty it all out. This is why your mind races at night.", tag:"plan", icon:"💭" },
+    { time:"10:30pm", duration:"10 min", title:"Tomorrow's Today Card", detail:"From your brain dump, pick exactly 3 tasks for tomorrow. Write them down. Order them 1-2-3. Done. Morning-you will thank you.", tag:"plan", icon:"🗒️" },
+    { time:"10:40pm", duration:"10 min", title:"Bathroom basics #2", detail:"Shower (if not morning) OR face wash + teeth + skincare. Anchored here — same spot every night.", tag:"body", icon:"🚿" },
+    { time:"10:50pm", duration:"10 min", title:"Wind down", detail:"Rotate to keep it fresh: podcast, light reading, journaling, music. Phone screen only if chosen in advance — not scrolled into.", tag:"reward", icon:"🌙" },
+    { time:"11:00pm", duration:"", title:"Lights out", detail:"Phone across the room. Already decided. Already done.", tag:"anchor", icon:"😴" }
+  ]
+};
+
+let state = { morning: {}, evening: {} };
+let activeTab = 'morning';
+
+function loadState() {
+  const saved = localStorage.getItem('adora-routine-state');
+  if (saved) state = JSON.parse(saved);
+}
+
+function saveState() {
+  localStorage.setItem('adora-routine-state', JSON.stringify(state));
+}
+
+function switchTab(tab) {
+  activeTab = tab;
+  document.getElementById('tab-morning').className = 'tab' + (tab === 'morning' ? ' active-morning' : '');
+  document.getElementById('tab-evening').className = 'tab' + (tab === 'evening' ? ' active-evening' : '');
+  document.getElementById('time-banner').textContent = tab === 'morning' ? '5:30am → 10:10am' : '10:00pm → 11:00pm';
+  document.getElementById('novelty-note').style.display = tab === 'evening' ? 'block' : 'none';
+  document.getElementById('progress-fill').className = 'progress-bar-fill ' + (tab === 'morning' ? 'morning-fill' : 'evening-fill');
+  renderCards();
+}
+
+function toggleCard(index) {
+  const key = activeTab + '-' + index;
+  state[activeTab][index] = !state[activeTab][index];
+  saveState();
+  const card = document.querySelector(`[data-index="${index}"]`);
+  if (card) {
+    card.classList.toggle('done', state[activeTab][index]);
+    const ring = card.querySelector('.check-ring');
+    ring.textContent = state[activeTab][index] ? '✓' : '';
+    ring.classList.add('popping');
+    setTimeout(() => ring.classList.remove('popping'), 200);
+  }
+  updateProgress();
+}
+
+function updateProgress() {
+  const total = routines[activeTab].length;
+  const done = Object.values(state[activeTab]).filter(Boolean).length;
+  document.getElementById('progress-fill').style.width = (done / total * 100) + '%';
+}
+
+function renderCards() {
+  const container = document.getElementById('cards-container');
+  const items = routines[activeTab];
+  container.innerHTML = items.map((item, i) => {
+    const done = state[activeTab][i] || false;
+    return `
+      <div class="card ${done ? 'done' : ''}" data-tag="${item.tag}" data-index="${i}" onclick="toggleCard(${i})">
+        <div class="card-icon-col">
+          <span class="card-icon">${item.icon}</span>
+          <span class="tag-pill">${item.tag.toUpperCase()}</span>
+        </div>
+        <div class="card-content">
+          <div class="card-meta">
+            <div>
+              <span class="card-time">${item.time}</span>
+              ${item.duration ? `<span class="duration-pill">${item.duration}</span>` : ''}
+            </div>
+            <div class="check-ring">${done ? '✓' : ''}</div>
+          </div>
+          <div class="card-title">${item.title}</div>
+          <div class="card-detail">${item.detail}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+  updateProgress();
+}
+
+function resetDay() {
+  if (confirm('Reset all checks for today?')) {
+    state[activeTab] = {};
+    saveState();
+    renderCards();
+  }
+}
+
+loadState();
+renderCards();
+</script>
+</body>
+</html>
