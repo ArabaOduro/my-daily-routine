@@ -75,18 +75,19 @@
     padding: 4px;
     margin-bottom: 20px;
     border: 1px solid #1e1e1e;
+    gap: 3px;
   }
 
   .tab {
     flex: 1;
-    padding: 11px 8px;
+    padding: 10px 4px;
     border-radius: 9px;
     border: none;
     cursor: pointer;
     font-family: 'DM Mono', monospace;
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 500;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
     background: transparent;
     color: #555;
@@ -95,6 +96,7 @@
 
   .tab.active-morning { background: var(--accent-anchor); color: #fff; }
   .tab.active-evening { background: var(--accent-work); color: #fff; }
+  .tab.active-tracker { background: var(--accent-reward); color: #000; }
 
   .time-banner {
     font-family: 'DM Mono', monospace;
@@ -104,11 +106,7 @@
     padding-left: 2px;
   }
 
-  .cards {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
+  .cards { display: flex; flex-direction: column; gap: 10px; }
 
   .card {
     display: flex;
@@ -139,9 +137,7 @@
   .card.done .card-detail { color: #333; }
   .card.done .card-time { color: #333; }
   .card.done .tag-pill { opacity: 0.3; }
-  .card.done .check-ring { border-color: #555 !important; }
 
-  /* Tag variants */
   .card[data-tag="anchor"] { background: var(--card-anchor); border-color: #e9456022; }
   .card[data-tag="anchor"]::before { background: var(--accent-anchor); }
   .card[data-tag="body"] { background: var(--card-body); border-color: #00b4d822; }
@@ -180,11 +176,7 @@
     margin-bottom: 5px;
   }
 
-  .card-time {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    color: var(--muted);
-  }
+  .card-time { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); }
 
   .duration-pill {
     font-family: 'DM Mono', monospace;
@@ -212,32 +204,158 @@
     color: #000;
   }
 
-  .card[data-tag="anchor"]:not(.done) .check-ring:hover,
   .card[data-tag="anchor"].done .check-ring { border-color: var(--accent-anchor); background: var(--accent-anchor); }
-  .card[data-tag="body"]:not(.done) .check-ring:hover,
   .card[data-tag="body"].done .check-ring { border-color: var(--accent-body); background: var(--accent-body); }
-  .card[data-tag="plan"]:not(.done) .check-ring:hover,
   .card[data-tag="plan"].done .check-ring { border-color: var(--accent-plan); background: var(--accent-plan); }
-  .card[data-tag="work"]:not(.done) .check-ring:hover,
   .card[data-tag="work"].done .check-ring { border-color: var(--accent-work); background: var(--accent-work); }
-  .card[data-tag="reward"]:not(.done) .check-ring:hover,
   .card[data-tag="reward"].done .check-ring { border-color: var(--accent-reward); background: var(--accent-reward); }
 
-  .card-title {
+  .card-title { font-family: 'DM Serif Display', serif; font-size: 15px; color: var(--text); margin-bottom: 5px; transition: all 0.2s; }
+  .card-detail { font-size: 12.5px; color: #aaa; line-height: 1.55; transition: color 0.2s; }
+
+  /* ── TRACKER STYLES ── */
+  .tracker-section { margin-bottom: 28px; }
+
+  .tracker-section-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: #555;
+    margin-bottom: 12px;
+    padding-left: 2px;
+  }
+
+  .habit-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    background: #0f0f18;
+    border-radius: 12px;
+    border: 1px solid #1a1a2a;
+    margin-bottom: 8px;
+  }
+
+  .habit-left { display: flex; align-items: center; gap: 12px; flex: 1; }
+  .habit-icon { font-size: 18px; }
+  .habit-name { font-size: 14px; color: #ddd; font-family: 'DM Sans', sans-serif; }
+  .habit-streak {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: #444;
+    margin-top: 2px;
+  }
+  .habit-streak span { color: var(--accent-reward); }
+
+  .week-dots { display: flex; gap: 5px; }
+
+  .dot {
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    border: 1.5px solid #2a2a3a;
+    background: transparent;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: #444;
+    transition: all 0.18s ease;
+    -webkit-user-select: none;
+    user-select: none;
+    flex-direction: column;
+    gap: 1px;
+  }
+
+  .dot .day-label { font-size: 8px; color: #333; }
+  .dot.filled { background: var(--accent-reward); border-color: var(--accent-reward); color: #000; }
+  .dot.filled .day-label { color: #004d3a; }
+  .dot.today-dot { border-color: #555; }
+
+  /* Project tracker */
+  .project-card {
+    background: #0d0d1a;
+    border: 1px solid #1e1e2e;
+    border-radius: 14px;
+    padding: 16px 18px;
+    margin-bottom: 10px;
+  }
+
+  .project-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
+  }
+
+  .project-name {
     font-family: 'DM Serif Display', serif;
     font-size: 15px;
     color: var(--text);
-    margin-bottom: 5px;
+  }
+
+  .project-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-weight: 500;
+  }
+
+  .project-next {
+    font-size: 12px;
+    color: #777;
+    margin-bottom: 12px;
+    line-height: 1.5;
+  }
+
+  .project-next strong { color: #aaa; font-weight: 500; }
+
+  .progress-track {
+    height: 4px;
+    background: #1a1a2a;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 6px;
+  }
+
+  .progress-track-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.4s ease;
+  }
+
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: #444;
+  }
+
+  .progress-btns {
+    display: flex;
+    gap: 6px;
+    margin-top: 12px;
+  }
+
+  .prog-btn {
+    flex: 1;
+    padding: 7px;
+    border-radius: 8px;
+    border: 1px solid #2a2a3a;
+    background: transparent;
+    color: #666;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    cursor: pointer;
     transition: all 0.2s;
   }
 
-  .card-detail {
-    font-size: 12.5px;
-    color: #aaa;
-    line-height: 1.55;
-    transition: color 0.2s;
-  }
+  .prog-btn:hover { border-color: #555; color: #aaa; }
+  .prog-btn.primary { border-color: var(--accent-work); color: var(--accent-work); }
+  .prog-btn.primary:hover { background: var(--accent-work); color: #fff; }
 
+  /* Novelty / legend / footer shared */
   .novelty-box {
     margin-top: 10px;
     background: #1a1a0d;
@@ -245,96 +363,128 @@
     border-radius: 12px;
     padding: 16px 18px;
   }
-
   .novelty-box .label-small { color: var(--accent-plan); margin-bottom: 6px; }
   .novelty-box p { font-size: 13px; color: #bbb; line-height: 1.6; }
 
-  .legend {
-    margin-top: 28px;
-    padding: 16px;
-    background: #0d0d0d;
-    border-radius: 12px;
-    border: 1px solid #181818;
-  }
-
-  .legend-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    color: #444;
-    letter-spacing: 0.1em;
-    margin-bottom: 10px;
-  }
-
-  .legend-items {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-
-  .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    color: #555;
-  }
-
-  .legend-dot {
-    width: 8px; height: 8px;
-    border-radius: 2px;
-  }
+  .legend { margin-top: 28px; padding: 16px; background: #0d0d0d; border-radius: 12px; border: 1px solid #181818; }
+  .legend-label { font-family: 'DM Mono', monospace; font-size: 10px; color: #444; letter-spacing: 0.1em; margin-bottom: 10px; }
+  .legend-items { display: flex; flex-wrap: wrap; gap: 10px; }
+  .legend-item { display: flex; align-items: center; gap: 5px; font-family: 'DM Mono', monospace; font-size: 10px; color: #555; }
+  .legend-dot { width: 8px; height: 8px; border-radius: 2px; }
 
   .reset-btn {
-    display: block;
-    margin: 20px auto 0;
+    display: block; margin: 20px auto 0;
+    background: transparent; border: 1px solid #222;
+    color: #444; font-family: 'DM Mono', monospace; font-size: 10px;
+    letter-spacing: 0.1em; padding: 8px 18px; border-radius: 8px;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .reset-btn:hover { border-color: #444; color: #777; }
+
+  .footer-note { margin-top: 24px; text-align: center; font-family: 'DM Serif Display', serif; font-style: italic; font-size: 13px; color: #333; }
+
+  .progress-bar-wrap { height: 3px; background: #1a1a1a; border-radius: 2px; margin-bottom: 20px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; border-radius: 2px; transition: width 0.4s ease; }
+  .morning-fill { background: var(--accent-anchor); }
+  .evening-fill { background: var(--accent-work); }
+  .tracker-fill { background: var(--accent-reward); }
+
+  @keyframes checkPop { 0%{transform:scale(1)} 50%{transform:scale(1.2)} 100%{transform:scale(1)} }
+  .popping { animation: checkPop 0.2s ease; }
+
+  .today-card-box {
+    background: #111820;
+    border: 1px solid #f4a26133;
+    border-radius: 14px;
+    padding: 18px;
+    margin-bottom: 20px;
+  }
+
+  .today-card-box .label-small { color: var(--accent-plan); margin-bottom: 10px; }
+
+  .today-task {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid #1e1e1e;
+    cursor: pointer;
+  }
+  .today-task:last-child { border-bottom: none; }
+
+  .task-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--accent-plan);
+    min-width: 18px;
+  }
+
+  .task-text {
+    font-size: 14px;
+    color: #ccc;
+    flex: 1;
+  }
+
+  .task-check {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    border: 1.5px solid #333;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: bold; color: #000;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+
+  .today-task.done .task-text { text-decoration: line-through; color: #444; }
+  .today-task.done .task-check { background: var(--accent-plan); border-color: var(--accent-plan); }
+
+  .edit-tasks-btn {
+    margin-top: 12px;
+    width: 100%;
+    padding: 9px;
     background: transparent;
-    border: 1px solid #222;
-    color: #444;
+    border: 1px solid #2a2a1a;
+    color: #666;
     font-family: 'DM Mono', monospace;
     font-size: 10px;
-    letter-spacing: 0.1em;
-    padding: 8px 18px;
+    letter-spacing: 0.08em;
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s;
   }
+  .edit-tasks-btn:hover { border-color: var(--accent-plan); color: var(--accent-plan); }
 
-  .reset-btn:hover { border-color: #444; color: #777; }
+  .task-input-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
 
-  .footer-note {
-    margin-top: 24px;
-    text-align: center;
-    font-family: 'DM Serif Display', serif;
-    font-style: italic;
+  .task-input {
+    flex: 1;
+    background: #0d0d0d;
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+    padding: 9px 12px;
+    color: #ddd;
+    font-family: 'DM Sans', sans-serif;
     font-size: 13px;
-    color: #333;
+    outline: none;
   }
+  .task-input:focus { border-color: var(--accent-plan); }
+  .task-input::placeholder { color: #333; }
 
-  .progress-bar-wrap {
-    height: 3px;
-    background: #1a1a1a;
-    border-radius: 2px;
-    margin-bottom: 20px;
-    overflow: hidden;
+  .save-tasks-btn {
+    padding: 9px 14px;
+    background: var(--accent-plan);
+    border: none;
+    border-radius: 8px;
+    color: #000;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    cursor: pointer;
   }
-
-  .progress-bar-fill {
-    height: 100%;
-    border-radius: 2px;
-    transition: width 0.4s ease;
-  }
-
-  .morning-fill { background: var(--accent-anchor); }
-  .evening-fill { background: var(--accent-work); }
-
-  @keyframes checkPop {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.2); }
-    100% { transform: scale(1); }
-  }
-
-  .popping { animation: checkPop 0.2s ease; }
 </style>
 </head>
 <body>
@@ -347,6 +497,7 @@
   <div class="tabs">
     <button class="tab active-morning" id="tab-morning" onclick="switchTab('morning')">🌅 Morning</button>
     <button class="tab" id="tab-evening" onclick="switchTab('evening')">🌙 Evening</button>
+    <button class="tab" id="tab-tracker" onclick="switchTab('tracker')">📊 Tracker</button>
   </div>
 
   <div class="progress-bar-wrap">
@@ -354,7 +505,6 @@
   </div>
 
   <div class="time-banner" id="time-banner">5:30am → 10:10am</div>
-
   <div class="cards" id="cards-container"></div>
 
   <div id="novelty-note" style="display:none">
@@ -364,23 +514,57 @@
     </div>
   </div>
 
-  <div class="legend">
-    <div class="legend-label">LEGEND</div>
-    <div class="legend-items">
-      <div class="legend-item"><div class="legend-dot" style="background:#e94560"></div>ANCHOR</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#00b4d8"></div>BODY</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#f4a261"></div>PLAN</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#8338ec"></div>WORK</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#06d6a0"></div>REWARD</div>
+  <div id="tracker-container" style="display:none">
+
+    <!-- Today Card -->
+    <div class="today-card-box">
+      <div class="label-small">🗒️ TODAY'S CARD</div>
+      <div id="task-display"></div>
+      <button class="edit-tasks-btn" onclick="toggleTaskEdit()">✏️ EDIT TODAY'S TASKS</button>
+      <div id="task-edit" style="display:none; margin-top:12px;">
+        <div class="task-input-row"><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--accent-plan);padding-top:10px;min-width:18px">1</span><input class="task-input" id="task-input-0" placeholder="Task 1..."></div>
+        <div class="task-input-row"><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--accent-plan);padding-top:10px;min-width:18px">2</span><input class="task-input" id="task-input-1" placeholder="Task 2..."></div>
+        <div class="task-input-row"><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--accent-plan);padding-top:10px;min-width:18px">3</span><input class="task-input" id="task-input-2" placeholder="Task 3..."></div>
+        <button class="save-tasks-btn" style="width:100%;margin-top:4px" onclick="saveTasks()">SAVE TASKS</button>
+      </div>
+    </div>
+
+    <!-- Daily Habits -->
+    <div class="tracker-section">
+      <div class="tracker-section-title">DAILY HABITS — THIS WEEK</div>
+      <div id="habits-container"></div>
+    </div>
+
+    <!-- Projects -->
+    <div class="tracker-section">
+      <div class="tracker-section-title">PROJECT PROGRESS</div>
+      <div id="projects-container"></div>
+    </div>
+
+  </div>
+
+  <div id="legend-block">
+    <div class="legend">
+      <div class="legend-label">LEGEND</div>
+      <div class="legend-items">
+        <div class="legend-item"><div class="legend-dot" style="background:#e94560"></div>ANCHOR</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#00b4d8"></div>BODY</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#f4a261"></div>PLAN</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#8338ec"></div>WORK</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#06d6a0"></div>REWARD</div>
+      </div>
     </div>
   </div>
 
-  <button class="reset-btn" onclick="resetDay()">↺ RESET TODAY</button>
-  <p class="footer-note">Start with just the Tonight Card. One thing at a time.</p>
+  <button class="reset-btn" id="reset-btn" onclick="resetDay()">↺ RESET TODAY</button>
+  <p class="footer-note">One day at a time. One tick at a time.</p>
 
 </div>
 
 <script>
+const DAY_LABELS = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+const TODAY_DOW = new Date().getDay(); // 0=Sun
+
 const routines = {
   morning: [
     { time:"5:30am", duration:"5 min", title:"Wake up", detail:"Phone stays face down — across the room. No scrolling. Just breathe.", tag:"anchor", icon:"🌅" },
@@ -390,42 +574,113 @@ const routines = {
     { time:"6:10am", duration:"110 min", title:"Deep work block 1", detail:"Task #1 from your Today Card. Use Focusmate 3×/week. Breakfast at desk is fine.", tag:"work", icon:"🧠" },
     { time:"8:00am", duration:"10 min", title:"Micro-reward break", detail:"Something genuinely enjoyable — favourite song, step outside, a snack. Non-negotiable dopamine top-up.", tag:"reward", icon:"⭐" },
     { time:"8:10am", duration:"110 min", title:"Deep work block 2", detail:"Your sharpest window. Task #2 from Today Card. Guard this time fiercely.", tag:"work", icon:"🧠" },
-    { time:"10:00am", duration:"10 min", title:"Transition + visual tick", detail:"Tick off what got done on your tracker. 30 seconds of genuine satisfaction. Then pivot to midday.", tag:"plan", icon:"✅" }
+    { time:"10:00am", duration:"10 min", title:"Transition + visual tick", detail:"Go to the Tracker tab. Tick off habits and update project progress. 2 minutes of satisfaction.", tag:"plan", icon:"✅" }
   ],
   evening: [
     { time:"10:00pm", duration:"15 min", title:"Shutdown ritual", detail:"Close all work tabs. Write one sentence about what you did today. Signal to your brain: work is done.", tag:"anchor", icon:"🔒" },
     { time:"10:15pm", duration:"15 min", title:"Brain dump", detail:"Everything in your head → Google Keep. Tasks, worries, ideas, things you remembered. Empty it all out. This is why your mind races at night.", tag:"plan", icon:"💭" },
-    { time:"10:30pm", duration:"10 min", title:"Tomorrow's Today Card", detail:"From your brain dump, pick exactly 3 tasks for tomorrow. Write them down. Order them 1-2-3. Done. Morning-you will thank you.", tag:"plan", icon:"🗒️" },
+    { time:"10:30pm", duration:"10 min", title:"Tomorrow's Today Card", detail:"Go to Tracker tab → Today's Card. Type your 3 tasks for tomorrow. Order them 1-2-3. Done.", tag:"plan", icon:"🗒️" },
     { time:"10:40pm", duration:"10 min", title:"Bathroom basics #2", detail:"Shower (if not morning) OR face wash + teeth + skincare. Anchored here — same spot every night.", tag:"body", icon:"🚿" },
     { time:"10:50pm", duration:"10 min", title:"Wind down", detail:"Rotate to keep it fresh: podcast, light reading, journaling, music. Phone screen only if chosen in advance — not scrolled into.", tag:"reward", icon:"🌙" },
     { time:"11:00pm", duration:"", title:"Lights out", detail:"Phone across the room. Already decided. Already done.", tag:"anchor", icon:"😴" }
   ]
 };
 
-let state = { morning: {}, evening: {} };
+const HABITS = [
+  { id:"deep_work", icon:"🧠", name:"Deep Work done" },
+  { id:"usmle", icon:"📖", name:"USMLE 30 mins" },
+  { id:"brain_dump", icon:"💭", name:"Brain dump" },
+  { id:"today_card", icon:"🗒️", name:"Today Card written" },
+  { id:"phone_down", icon:"📵", name:"Phone down by 9pm" },
+  { id:"emails", icon:"📧", name:"Emails checked" }
+];
+
+const PROJECTS = [
+  { id:"gh_cases", icon:"💼", name:"GH Cases", color:"#00b4d8", target:"350/day", phases:["In progress","On track","Behind","Caught up"] },
+  { id:"dr_gloria", icon:"🔬", name:"Dr. Gloria Manuscript", color:"#8338ec", target:"Citations + refs", phases:["Not started","In progress","Draft done","Submitted"] },
+  { id:"usmle_prep", icon:"📖", name:"USMLE Prep", color:"#e94560", target:"30 min/day", phases:["Just starting","Building habit","Consistent","Strong"] },
+  { id:"substack", icon:"✍️", name:"Substack", color:"#f4a261", target:"First post", phases:["Idea stage","Drafting","Almost ready","Published!"] },
+  { id:"duke", icon:"📋", name:"Duke Field Work", color:"#06d6a0", target:"Active cases", phases:["Pending","In progress","Submitted","Complete"] }
+];
+
+// State
+let state = {
+  morning: {}, evening: {},
+  habits: {}, // { "YYYY-MM-DD": { habit_id: true/false } }
+  projects: {}, // { project_id: { phase: 0, notes: "" } }
+  tasks: ["GH cases — work through as many as possible 6–10am","Dr. Gloria manuscript — open it, add citations using reference manager","Check and action emails — inbox open, read everything, flag replies"],
+  taskDone: [false, false, false]
+};
+
 let activeTab = 'morning';
 
+function todayKey() {
+  const d = new Date();
+  return d.toISOString().split('T')[0];
+}
+
+function getWeekKeys() {
+  const today = new Date();
+  const dow = today.getDay();
+  return Array.from({length:7}, (_,i) => {
+    const d = new Date(today);
+    d.setDate(today.getDate() - dow + i);
+    return d.toISOString().split('T')[0];
+  });
+}
+
 function loadState() {
-  const saved = localStorage.getItem('adora-routine-state');
-  if (saved) state = JSON.parse(saved);
+  const saved = localStorage.getItem('adora-v2-state');
+  if (saved) {
+    const parsed = JSON.parse(saved);
+    state = { ...state, ...parsed };
+  }
+  // ensure project phases exist
+  PROJECTS.forEach(p => {
+    if (!state.projects[p.id]) state.projects[p.id] = { phase: 0 };
+  });
 }
 
 function saveState() {
-  localStorage.setItem('adora-routine-state', JSON.stringify(state));
+  localStorage.setItem('adora-v2-state', JSON.stringify(state));
 }
 
 function switchTab(tab) {
   activeTab = tab;
-  document.getElementById('tab-morning').className = 'tab' + (tab === 'morning' ? ' active-morning' : '');
-  document.getElementById('tab-evening').className = 'tab' + (tab === 'evening' ? ' active-evening' : '');
-  document.getElementById('time-banner').textContent = tab === 'morning' ? '5:30am → 10:10am' : '10:00pm → 11:00pm';
+  ['morning','evening','tracker'].forEach(t => {
+    const el = document.getElementById('tab-'+t);
+    el.className = 'tab' + (t === tab ? ' active-'+t : '');
+  });
+
+  document.getElementById('cards-container').style.display = tab !== 'tracker' ? 'flex' : 'none';
+  document.getElementById('tracker-container').style.display = tab === 'tracker' ? 'block' : 'none';
   document.getElementById('novelty-note').style.display = tab === 'evening' ? 'block' : 'none';
-  document.getElementById('progress-fill').className = 'progress-bar-fill ' + (tab === 'morning' ? 'morning-fill' : 'evening-fill');
-  renderCards();
+  document.getElementById('legend-block').style.display = tab !== 'tracker' ? 'block' : 'none';
+  document.getElementById('reset-btn').style.display = tab !== 'tracker' ? 'block' : 'none';
+
+  if (tab === 'morning') {
+    document.getElementById('time-banner').textContent = '5:30am → 10:10am';
+    document.getElementById('time-banner').style.display = 'block';
+    document.getElementById('progress-fill').className = 'progress-bar-fill morning-fill';
+  } else if (tab === 'evening') {
+    document.getElementById('time-banner').textContent = '10:00pm → 11:00pm';
+    document.getElementById('time-banner').style.display = 'block';
+    document.getElementById('progress-fill').className = 'progress-bar-fill evening-fill';
+  } else {
+    document.getElementById('time-banner').style.display = 'none';
+    document.getElementById('progress-fill').className = 'progress-bar-fill tracker-fill';
+  }
+
+  if (tab === 'tracker') {
+    renderTracker();
+    updateTrackerProgress();
+  } else {
+    renderCards();
+  }
 }
 
+// ── ROUTINE CARDS ──
 function toggleCard(index) {
-  const key = activeTab + '-' + index;
   state[activeTab][index] = !state[activeTab][index];
   saveState();
   const card = document.querySelector(`[data-index="${index}"]`);
@@ -467,8 +722,7 @@ function renderCards() {
           <div class="card-title">${item.title}</div>
           <div class="card-detail">${item.detail}</div>
         </div>
-      </div>
-    `;
+      </div>`;
   }).join('');
   updateProgress();
 }
@@ -481,7 +735,152 @@ function resetDay() {
   }
 }
 
+// ── TRACKER ──
+function renderTracker() {
+  renderTodayCard();
+  renderHabits();
+  renderProjects();
+}
+
+// Today Card
+function renderTodayCard() {
+  const display = document.getElementById('task-display');
+  display.innerHTML = state.tasks.map((t, i) => `
+    <div class="today-task ${state.taskDone[i] ? 'done' : ''}" onclick="toggleTask(${i})">
+      <span class="task-num">${i+1}</span>
+      <span class="task-text">${t || '<span style="color:#333">No task set</span>'}</span>
+      <div class="task-check">${state.taskDone[i] ? '✓' : ''}</div>
+    </div>
+  `).join('');
+}
+
+function toggleTask(i) {
+  state.taskDone[i] = !state.taskDone[i];
+  saveState();
+  renderTodayCard();
+  updateTrackerProgress();
+}
+
+function toggleTaskEdit() {
+  const edit = document.getElementById('task-edit');
+  const isVisible = edit.style.display !== 'none';
+  if (!isVisible) {
+    state.tasks.forEach((t, i) => {
+      document.getElementById('task-input-'+i).value = t;
+    });
+  }
+  edit.style.display = isVisible ? 'none' : 'block';
+}
+
+function saveTasks() {
+  state.tasks = [0,1,2].map(i => document.getElementById('task-input-'+i).value.trim());
+  state.taskDone = [false, false, false];
+  saveState();
+  document.getElementById('task-edit').style.display = 'none';
+  renderTodayCard();
+}
+
+// Habits
+function renderHabits() {
+  const weekKeys = getWeekKeys();
+  const container = document.getElementById('habits-container');
+  container.innerHTML = HABITS.map(h => {
+    const streak = calcStreak(h.id);
+    const dots = weekKeys.map((k, i) => {
+      const filled = state.habits[k] && state.habits[k][h.id];
+      const isToday = i === TODAY_DOW;
+      return `<div class="dot ${filled ? 'filled' : ''} ${isToday ? 'today-dot' : ''}" onclick="toggleHabit('${h.id}','${k}')">
+        <span>${filled ? '✓' : ''}</span>
+        <span class="day-label">${DAY_LABELS[i]}</span>
+      </div>`;
+    }).join('');
+    return `
+      <div class="habit-row">
+        <div class="habit-left">
+          <span class="habit-icon">${h.icon}</span>
+          <div>
+            <div class="habit-name">${h.name}</div>
+            <div class="habit-streak">streak: <span>${streak} day${streak !== 1 ? 's' : ''}</span></div>
+          </div>
+        </div>
+        <div class="week-dots">${dots}</div>
+      </div>`;
+  }).join('');
+}
+
+function toggleHabit(habitId, dateKey) {
+  if (!state.habits[dateKey]) state.habits[dateKey] = {};
+  state.habits[dateKey][habitId] = !state.habits[dateKey][habitId];
+  saveState();
+  renderHabits();
+  updateTrackerProgress();
+}
+
+function calcStreak(habitId) {
+  let streak = 0;
+  const today = new Date();
+  for (let i = 0; i < 30; i++) {
+    const d = new Date(today);
+    d.setDate(today.getDate() - i);
+    const k = d.toISOString().split('T')[0];
+    if (state.habits[k] && state.habits[k][habitId]) {
+      streak++;
+    } else if (i > 0) break;
+  }
+  return streak;
+}
+
+// Projects
+function renderProjects() {
+  const container = document.getElementById('projects-container');
+  container.innerHTML = PROJECTS.map(p => {
+    const proj = state.projects[p.id] || { phase: 0 };
+    const phase = proj.phase || 0;
+    const pct = Math.round((phase / (p.phases.length - 1)) * 100);
+    return `
+      <div class="project-card">
+        <div class="project-header">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:18px">${p.icon}</span>
+            <div class="project-name">${p.name}</div>
+          </div>
+          <span class="project-tag" style="background:${p.color}22;color:${p.color}">${p.target}</span>
+        </div>
+        <div class="project-next">Status: <strong>${p.phases[phase]}</strong></div>
+        <div class="progress-track">
+          <div class="progress-track-fill" style="width:${pct}%;background:${p.color}"></div>
+        </div>
+        <div class="progress-label">
+          <span>${p.phases[0]}</span>
+          <span style="color:${p.color}">${pct}%</span>
+          <span>${p.phases[p.phases.length-1]}</span>
+        </div>
+        <div class="progress-btns">
+          ${phase > 0 ? `<button class="prog-btn" onclick="moveProject('${p.id}',-1)">← Back</button>` : ''}
+          ${phase < p.phases.length-1 ? `<button class="prog-btn primary" onclick="moveProject('${p.id}',1)">Move forward →</button>` : '<button class="prog-btn" style="border-color:#06d6a0;color:#06d6a0" disabled>✓ Done!</button>'}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function moveProject(projectId, dir) {
+  if (!state.projects[projectId]) state.projects[projectId] = { phase: 0 };
+  const p = PROJECTS.find(x => x.id === projectId);
+  state.projects[projectId].phase = Math.max(0, Math.min(p.phases.length - 1, state.projects[projectId].phase + dir));
+  saveState();
+  renderProjects();
+}
+
+function updateTrackerProgress() {
+  const todayHabits = state.habits[todayKey()] || {};
+  const done = HABITS.filter(h => todayHabits[h.id]).length + state.taskDone.filter(Boolean).length;
+  const total = HABITS.length + 3;
+  document.getElementById('progress-fill').style.width = (done / total * 100) + '%';
+}
+
+// Init
 loadState();
+PROJECTS.forEach(p => { if (!state.projects[p.id]) state.projects[p.id] = { phase: 0 }; });
 renderCards();
 </script>
 </body>
